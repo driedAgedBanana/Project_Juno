@@ -1,2 +1,7 @@
 17 - 06 - 2025
 Create project.
+
+18 - 06 - 2025
+Importing assets
+Set up basic player movement
+Replace the current player assets with the new one (the old one orientation is messed up)
