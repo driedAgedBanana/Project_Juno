@@ -10,13 +10,15 @@ public class Player_movement : MonoBehaviour
     public Rigidbody2D rb2D;
     public float moveSpeed = 5f;
     [HideInInspector] public float horizontalMovement;
-    public SpriteRenderer playerRenderer;
     [HideInInspector] public bool isPlayerFacingRight = true;
 
     [Header("Jump")]
     public Transform groundCheck;
     public LayerMask groundLayer;
     public float jumpingForce = 8;
+
+    [Header("Animations")]
+    public Animator playerAnimator;
 
     private void Awake()
     {
@@ -29,6 +31,8 @@ public class Player_movement : MonoBehaviour
         {
             Instance = this;
         }
+
+        playerAnimator = GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -36,7 +40,7 @@ public class Player_movement : MonoBehaviour
     {
         rb2D.linearVelocity = new Vector2(horizontalMovement * moveSpeed, rb2D.linearVelocity.y);
 
-        if(!isPlayerFacingRight && horizontalMovement > 0)
+        if (!isPlayerFacingRight && horizontalMovement > 0)
         {
             FlipCharacter();
         }
@@ -44,6 +48,12 @@ public class Player_movement : MonoBehaviour
         {
             FlipCharacter();
         }
+
+        playerAnimator.SetBool("isJumping", !IsGrounded());
+
+        playerAnimator.SetFloat("xVelocity", Mathf.Abs(rb2D.linearVelocity.x));
+        playerAnimator.SetFloat("yVelocity", rb2D.linearVelocity.y);
+
     }
 
     public bool IsGrounded()
@@ -53,15 +63,17 @@ public class Player_movement : MonoBehaviour
 
     public void Jump(InputAction.CallbackContext ctx)
     {
-        if(ctx.performed && IsGrounded())
+        if (ctx.performed && IsGrounded())
         {
             rb2D.linearVelocity = new Vector2(rb2D.linearVelocity.x, jumpingForce);
         }
 
-        if(ctx.canceled && rb2D.linearVelocity.y > 0)
+        if (ctx.canceled && rb2D.linearVelocity.y > 0)
         {
             rb2D.linearVelocity = new Vector2(rb2D.linearVelocity.x, rb2D.linearVelocity.y * 0.5f);
         }
+
+
     }
 
     public void Movement(InputAction.CallbackContext ctx)

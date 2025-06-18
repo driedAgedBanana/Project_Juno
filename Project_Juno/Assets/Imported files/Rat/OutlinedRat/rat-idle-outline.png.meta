@@ -285,7 +285,13 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      rat-idle-outline_0: 7103242086956636434
+      rat-idle-outline_1: -3368229243762298197
+      rat-idle-outline_2: 7229404749910579317
+      rat-idle-outline_3: -3274512472494358133
+      rat-idle-outline_4: -6285093350772343256
+      rat-idle-outline_5: -5795343512940673640
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

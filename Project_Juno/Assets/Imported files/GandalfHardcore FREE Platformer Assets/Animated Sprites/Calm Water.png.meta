@@ -185,7 +185,9 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Calm Water_0: 5801964797324530305
+      Calm Water_1: -400445486583079526
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

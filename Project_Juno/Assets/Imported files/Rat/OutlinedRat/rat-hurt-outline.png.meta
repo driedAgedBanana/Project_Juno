@@ -160,7 +160,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      rat-hurt-outline_0: 4848953822664656771
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

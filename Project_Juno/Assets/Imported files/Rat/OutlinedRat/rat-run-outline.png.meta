@@ -285,7 +285,13 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      rat-run-outline_0: -8209151544536033265
+      rat-run-outline_1: -6899280843410184146
+      rat-run-outline_2: -7607382887347771978
+      rat-run-outline_3: 3236954289883327395
+      rat-run-outline_4: -4825522377626253459
+      rat-run-outline_5: 8556058330761006011
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

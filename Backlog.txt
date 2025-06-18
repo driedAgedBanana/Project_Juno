@@ -5,3 +5,7 @@ Create project.
 Importing assets
 Set up basic player movement
 Replace the current player assets with the new one (the old one orientation is messed up)
+Player animation pack is done
+Creating first animation
+Working on attack animation
+Basic attack animation is basically done.

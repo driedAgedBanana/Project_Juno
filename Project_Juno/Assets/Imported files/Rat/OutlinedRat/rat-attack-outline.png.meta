@@ -285,7 +285,13 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      rat-attack-outline_0: -1945007663253291818
+      rat-attack-outline_1: 532161449224760789
+      rat-attack-outline_2: 3051653813653611188
+      rat-attack-outline_3: -5474827678152201681
+      rat-attack-outline_4: -1102559034433314314
+      rat-attack-outline_5: -6344655844187695294
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
