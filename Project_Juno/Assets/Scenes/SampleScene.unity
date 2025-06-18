@@ -502,6 +502,14 @@ PrefabInstance:
       propertyPath: playerAnimator
       value: 
       objectReference: {fileID: 1974751286}
+    - target: {fileID: 4855421654158352292, guid: bc46a5ca315132e4f8a862f017922e2d, type: 3}
+      propertyPath: m_Size.x
+      value: 2.5625
+      objectReference: {fileID: 0}
+    - target: {fileID: 4855421654158352292, guid: bc46a5ca315132e4f8a862f017922e2d, type: 3}
+      propertyPath: m_Size.y
+      value: 2.375
+      objectReference: {fileID: 0}
     - target: {fileID: 5768804180157923966, guid: bc46a5ca315132e4f8a862f017922e2d, type: 3}
       propertyPath: m_LocalPosition.x
       value: -2.31
