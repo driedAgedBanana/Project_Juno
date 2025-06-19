@@ -1,24 +1,34 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
+using System.Collections;
 
 public class Player_movement : MonoBehaviour
 {
     public static Player_movement Instance;
 
     [Header("Animations")]
-    public Animator player_Animator;
+    public Animator playerAnimator;
 
     [Header("Movement")]
     public Rigidbody2D rb2D;
-    public float move_Speed = 5f;
-    [HideInInspector] public float horizontal_Movement;
-    [HideInInspector] public bool is_Player_Facing_Right = true;
+    public float moveSpeed = 8f;
+    [HideInInspector] public float currentmoveSpeed;
+    [HideInInspector] public float horizontalMovement;
+    [HideInInspector] public bool isPlayerFacingRight = true;
 
     [Header("Jump")]
-    public Transform ground_Check;
-    public LayerMask ground_Layer;
-    public float jumping_Force = 8;
+    public Transform groundCheck;
+    public LayerMask groundLayer;
+    public float jumpingForce = 8;
+
+    [Header("Dashing")]
+    public TrailRenderer dashingTrail;
+    [HideInInspector] public bool canDash = true;
+    [HideInInspector] public bool isDashing;
+    public float dashingPower = 20f;
+    public float dashingTime = 0.2f;
+    public float dashingCooldown = 1f;
 
     private void Awake()
     {
@@ -32,7 +42,10 @@ public class Player_movement : MonoBehaviour
             Instance = this;
         }
 
-        player_Animator = GetComponent<Animator>();
+        playerAnimator = GetComponent<Animator>();
+
+        currentmoveSpeed = moveSpeed;
+        dashingTrail.emitting = false;
     }
 
     // Update is called once per frame
@@ -40,21 +53,28 @@ public class Player_movement : MonoBehaviour
     {
         if (Player_health.Instance.isAlive)
         {
-            rb2D.linearVelocity = new Vector2(horizontal_Movement * move_Speed, rb2D.linearVelocity.y);
+            if (isDashing)
+            {
+                playerAnimator.SetTrigger("isDashing");
+                return;
+            }
 
-            if (!is_Player_Facing_Right && horizontal_Movement > 0)
+            dashingTrail.emitting = false;
+
+            rb2D.linearVelocity = new Vector2(horizontalMovement * currentmoveSpeed, rb2D.linearVelocity.y);
+
+            if (!isPlayerFacingRight && horizontalMovement > 0)
             {
                 FlipCharacter();
             }
-            else if (is_Player_Facing_Right && horizontal_Movement < 0)
+            else if (isPlayerFacingRight && horizontalMovement < 0)
             {
                 FlipCharacter();
             }
 
-            player_Animator.SetBool("isJumping", !IsGrounded());
-
-            player_Animator.SetFloat("xVelocity", Mathf.Abs(rb2D.linearVelocity.x));
-            player_Animator.SetFloat("yVelocity", rb2D.linearVelocity.y);
+            playerAnimator.SetFloat("xVelocity", Mathf.Abs(rb2D.linearVelocity.x));
+            playerAnimator.SetFloat("yVelocity", rb2D.linearVelocity.y);
+            playerAnimator.SetBool("isJumping", !IsGrounded());
 
         }
         else
@@ -66,14 +86,14 @@ public class Player_movement : MonoBehaviour
 
     public bool IsGrounded()
     {
-        return Physics2D.OverlapCircle(ground_Check.position, 0.2f, ground_Layer);
+        return Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
     }
 
     public void Jump(InputAction.CallbackContext ctx)
     {
         if (ctx.performed && IsGrounded())
         {
-            rb2D.linearVelocity = new Vector2(rb2D.linearVelocity.x, jumping_Force);
+            rb2D.linearVelocity = new Vector2(rb2D.linearVelocity.x, jumpingForce);
         }
 
         if (ctx.canceled && rb2D.linearVelocity.y > 0)
@@ -85,14 +105,41 @@ public class Player_movement : MonoBehaviour
 
     public void Movement(InputAction.CallbackContext ctx)
     {
-        horizontal_Movement = ctx.ReadValue<Vector2>().x;
+        horizontalMovement = ctx.ReadValue<Vector2>().x;
     }
 
     public void FlipCharacter()
     {
-        is_Player_Facing_Right = !is_Player_Facing_Right;
+        isPlayerFacingRight = !isPlayerFacingRight;
         Vector3 localScale = transform.localScale;
         localScale.x *= -1f;
         transform.localScale = localScale;
+    }
+
+    public void Dashing(InputAction.CallbackContext ctx)
+    {
+        if(ctx.started)
+        {
+            StartCoroutine(Dashing());
+        }
+    }
+
+    private IEnumerator Dashing()
+    {
+        canDash = false;
+        
+        isDashing = true;
+        float originalGravity = rb2D.gravityScale; // Remember the original gravity because the RB will be disabled for a brief moment
+        rb2D.gravityScale = 0f;
+        rb2D.linearVelocity = new Vector2(horizontalMovement * dashingPower, 0f);
+        dashingTrail.emitting = true;
+        yield return new WaitForSeconds(dashingTime);
+
+        rb2D.gravityScale = originalGravity;
+        isDashing = false;
+        dashingTrail.emitting = false;
+
+        yield return new WaitForSeconds(dashingCooldown);
+        canDash = true;
     }
 }

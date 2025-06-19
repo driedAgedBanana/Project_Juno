@@ -11,4 +11,5 @@ Working on attack animation
 Basic attack animation is basically done.
 
 19 - 06 - 2025
-Trying to implement dashing with after image effect. Not working
+Trying to implement dashing with after image effect. Not working.
+Dashing rework, this time using trail renderer, now need to figure out why the dashing animation won't play when jumping.

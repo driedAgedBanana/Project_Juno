@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -8,6 +9,8 @@ public class Player_combat : MonoBehaviour
     [HideInInspector] public bool isAttacking;
 
     public Animator playerAnimator;
+
+    public float waitTime;
 
     private void Awake()
     {
@@ -22,6 +25,7 @@ public class Player_combat : MonoBehaviour
         }
 
         playerAnimator = GetComponent<Animator>();
+        isAttacking = false;
     }
 
     // Update is called once per frame
@@ -34,8 +38,17 @@ public class Player_combat : MonoBehaviour
     {
         if(ctx.started)
         {
-            isAttacking = true;
-            playerAnimator.SetTrigger("isAttacking");
+            StartCoroutine(Attacking());
         }
+    }
+
+    private IEnumerator Attacking()
+    {
+        isAttacking = true;
+        Player_movement.Instance.currentmoveSpeed = 0;
+        playerAnimator.SetTrigger("isAttacking");
+        yield return new WaitForSeconds(waitTime);
+        isAttacking = false;
+        Player_movement.Instance.currentmoveSpeed = Player_movement.Instance.moveSpeed;
     }
 }
