@@ -9,3 +9,6 @@ Player animation pack is done
 Creating first animation
 Working on attack animation
 Basic attack animation is basically done.
+
+19 - 06 - 2025
+Trying to implement dashing with after image effect. Not working
