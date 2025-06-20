@@ -10,7 +10,14 @@ public class Player_combat : MonoBehaviour
 
     public Animator playerAnimator;
 
+    public float attackRate = 2f;
+    private float _nextAtkTime;
     public float waitTime;
+    public int attackIndex = 0;
+
+    public Transform attackPoint;
+    public float attackRange = 0.5f;
+    public LayerMask enemyLayers;
 
     private void Awake()
     {
@@ -36,9 +43,10 @@ public class Player_combat : MonoBehaviour
 
     public void Attack(InputAction.CallbackContext ctx)
     {
-        if(ctx.started)
+        if(ctx.started && Time.time >= _nextAtkTime)
         {
             StartCoroutine(Attacking());
+            _nextAtkTime = Time.time + 1f / attackRate;
         }
     }
 
@@ -46,9 +54,28 @@ public class Player_combat : MonoBehaviour
     {
         isAttacking = true;
         Player_movement.Instance.currentmoveSpeed = 0;
+        attackIndex = (attackIndex + 1) % 2;
+        playerAnimator.SetInteger("attackIndex", attackIndex);
         playerAnimator.SetTrigger("isAttacking");
+        Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
+
+        foreach(Collider2D enemies in hitEnemies)
+        {
+            Debug.Log("Hit " + enemies.name);
+        }
+
         yield return new WaitForSeconds(waitTime);
         isAttacking = false;
         Player_movement.Instance.currentmoveSpeed = Player_movement.Instance.moveSpeed;
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        if(attackPoint == null)
+        {
+            return;
+        }
+
+        Gizmos.DrawWireSphere(attackPoint.position, attackRange);
     }
 }
