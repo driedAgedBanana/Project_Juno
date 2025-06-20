@@ -53,29 +53,31 @@ public class Player_movement : MonoBehaviour
     {
         if (Player_health.Instance.isAlive)
         {
-            if (isDashing)
+            if (!isDashing)
+            {
+
+                dashingTrail.emitting = false;
+
+                rb2D.linearVelocity = new Vector2(horizontalMovement * currentmoveSpeed, rb2D.linearVelocity.y);
+
+                if (!isPlayerFacingRight && horizontalMovement > 0)
+                {
+                    FlipCharacter();
+                }
+                else if (isPlayerFacingRight && horizontalMovement < 0)
+                {
+                    FlipCharacter();
+                }
+
+                playerAnimator.SetFloat("xVelocity", Mathf.Abs(rb2D.linearVelocity.x));
+                playerAnimator.SetFloat("yVelocity", rb2D.linearVelocity.y);
+                playerAnimator.SetBool("isJumping", !IsGrounded());
+            }
+            else
             {
                 playerAnimator.SetTrigger("isDashing");
                 return;
             }
-
-            dashingTrail.emitting = false;
-
-            rb2D.linearVelocity = new Vector2(horizontalMovement * currentmoveSpeed, rb2D.linearVelocity.y);
-
-            if (!isPlayerFacingRight && horizontalMovement > 0)
-            {
-                FlipCharacter();
-            }
-            else if (isPlayerFacingRight && horizontalMovement < 0)
-            {
-                FlipCharacter();
-            }
-
-            playerAnimator.SetFloat("xVelocity", Mathf.Abs(rb2D.linearVelocity.x));
-            playerAnimator.SetFloat("yVelocity", rb2D.linearVelocity.y);
-            playerAnimator.SetBool("isJumping", !IsGrounded());
-
         }
         else
         {
@@ -118,7 +120,7 @@ public class Player_movement : MonoBehaviour
 
     public void Dashing(InputAction.CallbackContext ctx)
     {
-        if(ctx.started)
+        if (ctx.started && canDash)
         {
             StartCoroutine(Dashing());
         }
@@ -127,7 +129,7 @@ public class Player_movement : MonoBehaviour
     private IEnumerator Dashing()
     {
         canDash = false;
-        
+
         isDashing = true;
         float originalGravity = rb2D.gravityScale; // Remember the original gravity because the RB will be disabled for a brief moment
         rb2D.gravityScale = 0f;
