@@ -19,4 +19,5 @@ Creating multiple attack animations
 Set  up combat system
 
 22 - 06 - 2025
-Creating damageable script, enemy can die under player's sword
+Creating damageable script, enemy can die under player's sword.
+Create enemy attack animation, inspired by Blasphemous (not really happy about it)
