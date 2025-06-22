@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using System.Collections;
 
-public class Player_movement : MonoBehaviour
+public class Player_movement : Health_script
 {
     public static Player_movement Instance;
 
@@ -51,40 +51,32 @@ public class Player_movement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Player_health.Instance.isAlive)
+        if (!isDashing)
         {
-            if (!isDashing)
+            dashingTrail.emitting = false;
+
+            rb2D.linearVelocity = new Vector2(horizontalMovement * currentmoveSpeed, rb2D.linearVelocity.y);
+
+            if (!isPlayerFacingRight && horizontalMovement > 0)
             {
-
-                dashingTrail.emitting = false;
-
-                rb2D.linearVelocity = new Vector2(horizontalMovement * currentmoveSpeed, rb2D.linearVelocity.y);
-
-                if (!isPlayerFacingRight && horizontalMovement > 0)
-                {
-                    FlipCharacter();
-                }
-                else if (isPlayerFacingRight && horizontalMovement < 0)
-                {
-                    FlipCharacter();
-                }
-
-                playerAnimator.SetFloat("xVelocity", Mathf.Abs(rb2D.linearVelocity.x));
-                playerAnimator.SetFloat("yVelocity", rb2D.linearVelocity.y);
-                playerAnimator.SetBool("isJumping", !IsGrounded());
+                FlipCharacter();
             }
-            else
+            else if (isPlayerFacingRight && horizontalMovement < 0)
             {
-                playerAnimator.SetTrigger("isDashing");
-                return;
+                FlipCharacter();
             }
+
+            playerAnimator.SetFloat("xVelocity", Mathf.Abs(rb2D.linearVelocity.x));
+            playerAnimator.SetFloat("yVelocity", rb2D.linearVelocity.y);
+            playerAnimator.SetBool("isJumping", !IsGrounded());
         }
         else
         {
+            playerAnimator.SetTrigger("isDashing");
             return;
         }
-
     }
+
 
     public bool IsGrounded()
     {

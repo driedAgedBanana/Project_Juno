@@ -1,0 +1,171 @@
+using System.Collections;
+using UnityEngine;
+
+public class Enemy_script : Health_script
+{
+    public Animator enemyAnimator;
+
+    [Header("Movement speed")]
+    public float patrolSpeed = 2f;
+    public float chaseSpeed = 3.5f;
+    private float currentSpeed;
+    private bool _shouldStop = false;
+    private bool _movingRight = true;
+
+    [Header("Detection")]
+    public float detectionRange = 5f;
+    public float patrolCheckDistance;
+    public float groundDetectionDistance = 2f;
+    public LayerMask groundLayer;
+    public Transform patrolCheckFront;
+    public LayerMask enemyLayer;
+
+    [Header("References")]
+    public Transform groundDetection;
+    public Transform player;
+
+
+    [Header("Attack and damages")]
+    public float idleBeforeAttack = 1f;
+    public float attackDuration = 0.5f;
+    public float cooldownBetweenAttacks = 1f;
+    public float attackCooldown;
+
+    [SerializeField] private bool _isPlayerInRange = false;
+    [SerializeField] private bool _canAttack = false;
+    public LayerMask playerLayer;
+    public int damageAmount = 30;
+
+    private void Start()
+    {
+        GameObject playerObj = GameObject.FindWithTag("Player");
+
+        if (playerObj != null)
+        {
+            player = playerObj.transform;
+        }
+        else
+        {
+            Debug.LogWarning("Player not found! Make sure your player has the 'Player' tag assigned.");
+        }
+
+        _canAttack = false;
+    }
+
+    private void Update()
+    {
+        if (_shouldStop) return;
+
+        float distanceToPlayer = Vector2.Distance(transform.position, player.position);
+
+        if (distanceToPlayer < detectionRange)
+        {
+            ChasingPlayer();
+        }
+        else
+        {
+            Patrolling();
+        }
+    }
+
+    private void Patrolling()
+    {
+        currentSpeed = patrolSpeed;
+        enemyAnimator.SetBool("isChasingPlayer", false);
+
+        // Move left or right depending on facing direction
+        transform.Translate((_movingRight ? Vector2.right : Vector2.left) * currentSpeed * Time.deltaTime);
+
+        // Raycast downward to check for ground
+        RaycastHit2D groundInfo = Physics2D.Raycast(groundDetection.position, Vector2.down, groundDetectionDistance, groundLayer);
+
+        // Raycast forward to check if other enemies are around
+        Vector2 frontDirection = _movingRight ? Vector2.right : Vector2.left;
+        RaycastHit2D patrolCheckHit = Physics2D.Raycast(patrolCheckFront.position, frontDirection, patrolCheckDistance, enemyLayer);
+        Debug.DrawRay(patrolCheckFront.position, patrolCheckDistance * frontDirection, Color.green);
+
+        // If no ground detected, flip direction
+        if (!groundInfo.collider || (patrolCheckHit.collider != null))
+        {
+            Flip();
+        }
+    }
+
+    private void ChasingPlayer()
+    {
+        currentSpeed = chaseSpeed;
+        enemyAnimator.SetBool("isChasingPlayer", true);
+
+        // Direction vector normalized toward player
+        Vector2 direction = (player.position - transform.position).normalized;
+
+        // Move toward the player
+        transform.position = Vector2.MoveTowards(transform.position, player.position, currentSpeed * Time.deltaTime);
+
+        // Flip sprite to face movement direction
+        if ((direction.x > 0 && !_movingRight) || (direction.x < 0 && _movingRight))
+        {
+            Flip();
+        }
+    }
+
+    private void Flip()
+    {
+        _movingRight = !_movingRight;
+
+        // Flip visual sprite by inverting scale.x
+        Vector3 localScale = transform.localScale;
+        localScale.x *= -1;
+        transform.localScale = localScale;
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            // Stop movement
+            _shouldStop = true;
+            currentSpeed = 0;
+            _isPlayerInRange = true;
+
+            StartCoroutine(Attacking());
+        }
+    }
+
+    private IEnumerator Attacking()
+    {
+        _canAttack = true;
+        
+        while(_isPlayerInRange)
+        {
+            animator.Play("Idle");
+            yield return new WaitForSeconds(idleBeforeAttack);
+
+            if (!_isPlayerInRange) break;
+
+            animator.Play("Attack");
+            yield return new WaitForSeconds(attackCooldown);
+            player.GetComponent<Health_script>().TakeDamage(damageAmount);
+
+            if (!_isPlayerInRange) break;
+
+            animator.Play("Idle");
+            yield return new WaitForSeconds(cooldownBetweenAttacks);
+        }
+
+        animator.Play("Idle");
+        _canAttack = false;
+    }
+
+    //private void OnTriggerExit2D(Collider2D collision)
+    //{
+    //    if (collision.gameObject.CompareTag("Player"))
+    //    {
+    //        enemyAnimator.SetBool("isChasingPlayer", true);
+
+    //        _shouldStop = false;
+
+    //        currentSpeed = chaseSpeed;
+    //    }
+    //}
+}

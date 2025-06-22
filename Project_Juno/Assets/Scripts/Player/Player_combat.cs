@@ -14,6 +14,7 @@ public class Player_combat : MonoBehaviour
     private float _nextAtkTime;
     public float waitTime;
     public int attackIndex = 0;
+    public int damageAmount = 40;
 
     public Transform attackPoint;
     public float attackRange = 0.5f;
@@ -61,7 +62,7 @@ public class Player_combat : MonoBehaviour
 
         foreach(Collider2D enemies in hitEnemies)
         {
-            Debug.Log("Hit " + enemies.name);
+            enemies.GetComponent<Health_script>().TakeDamage(damageAmount);
         }
 
         yield return new WaitForSeconds(waitTime);
