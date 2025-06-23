@@ -28,8 +28,8 @@ public class Enemy_script : Health_script
     [Header("Attack and damages")]
     public float idleBeforeAttack = 1f;
     public float attackDuration = 0.5f;
+    public float strikeTime;
     public float cooldownBetweenAttacks = 1f;
-    public float attackCooldown;
 
     [SerializeField] private bool _isPlayerInRange = false;
     [SerializeField] private bool _canAttack = false;
@@ -135,17 +135,26 @@ public class Enemy_script : Health_script
     private IEnumerator Attacking()
     {
         _canAttack = true;
-        
-        while(_isPlayerInRange)
+
+        while (_isPlayerInRange)
         {
             animator.Play("Idle");
             yield return new WaitForSeconds(idleBeforeAttack);
 
             if (!_isPlayerInRange) break;
 
+
             animator.Play("Attack");
-            yield return new WaitForSeconds(attackCooldown);
-            player.GetComponent<Health_script>().TakeDamage(damageAmount);
+
+            yield return new WaitForSeconds(strikeTime);
+
+            if (player != null && Vector2.Distance(transform.position, player.position) < detectionRange)
+            {
+                player.GetComponent<Health_script>().TakeDamage(damageAmount);
+            }
+
+            yield return new WaitForSeconds(attackDuration - strikeTime);
+
 
             if (!_isPlayerInRange) break;
 

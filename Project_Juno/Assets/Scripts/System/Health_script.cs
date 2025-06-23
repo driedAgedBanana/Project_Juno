@@ -25,7 +25,6 @@ public class Health_script : MonoBehaviour
     {
         _currentHealth -= damageAmount;
         _currentHealth = Mathf.Clamp(_currentHealth, 0, maxHealth);
-
         if (animator == null)
         {
             return;
@@ -34,6 +33,7 @@ public class Health_script : MonoBehaviour
         {
             animator.SetTrigger("isHurt");
         }
+
 
         if (_currentHealth <= 0)
         {

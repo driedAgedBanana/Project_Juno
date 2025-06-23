@@ -492,28 +492,20 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2003378085}
     - target: {fileID: 190099909565552450, guid: aa02e169f7810c04c9496e31a367d86f, type: 3}
-      propertyPath: _currentHealth
-      value: 100
+      propertyPath: strikeTime
+      value: 0.45
       objectReference: {fileID: 0}
     - target: {fileID: 190099909565552450, guid: aa02e169f7810c04c9496e31a367d86f, type: 3}
-      propertyPath: attackCooldown
-      value: 0.1
-      objectReference: {fileID: 0}
-    - target: {fileID: 190099909565552450, guid: aa02e169f7810c04c9496e31a367d86f, type: 3}
-      propertyPath: attackAnimation
-      value: 0.3
+      propertyPath: attackDuration
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 190099909565552450, guid: aa02e169f7810c04c9496e31a367d86f, type: 3}
       propertyPath: idleBeforeAttack
-      value: 0.6
-      objectReference: {fileID: 0}
-    - target: {fileID: 190099909565552450, guid: aa02e169f7810c04c9496e31a367d86f, type: 3}
-      propertyPath: patrolCheckDistance
-      value: 8.27
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 190099909565552450, guid: aa02e169f7810c04c9496e31a367d86f, type: 3}
       propertyPath: cooldownBetweenAttacks
-      value: 0.8
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 6028661974268613510, guid: aa02e169f7810c04c9496e31a367d86f, type: 3}
       propertyPath: m_Name

@@ -114,14 +114,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 100
-  _currentHealth: 0
+  _currentHealth: 100
   animator: {fileID: 4220358691465598098}
   lifeTime: 1
   enemyAnimator: {fileID: 4220358691465598098}
   patrolSpeed: 4
   chaseSpeed: 6
   detectionRange: 5
-  patrolCheckDistance: 0
+  patrolCheckDistance: 8.27
   groundDetectionDistance: 2
   groundLayer:
     serializedVersion: 2
@@ -132,16 +132,16 @@ MonoBehaviour:
     m_Bits: 256
   groundDetection: {fileID: 2189310796452177864}
   player: {fileID: 0}
-  idleBeforeAttack: 0.8
+  idleBeforeAttack: 0.6
   attackDuration: 0.6
-  cooldownBetweenAttacks: 0.9
+  cooldownBetweenAttacks: 0.8
+  attackCooldown: 1
   _isPlayerInRange: 0
   _canAttack: 0
   playerLayer:
     serializedVersion: 2
     m_Bits: 128
   damageAmount: 1
-  attackCooldown: 0
 --- !u!212 &8378475858588652993
 SpriteRenderer:
   m_ObjectHideFlags: 0
