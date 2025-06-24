@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class Enemy_script : Health_script
+public class Enemy_script : Enemy_health
 {
     public Animator enemyAnimator;
 
@@ -30,6 +30,7 @@ public class Enemy_script : Health_script
     public float attackDuration = 0.5f;
     public float strikeTime;
     public float cooldownBetweenAttacks = 1f;
+    public int attackRange;
 
     [SerializeField] private bool _isPlayerInRange = false;
     [SerializeField] private bool _canAttack = false;
@@ -148,9 +149,11 @@ public class Enemy_script : Health_script
 
             yield return new WaitForSeconds(strikeTime);
 
-            if (player != null && Vector2.Distance(transform.position, player.position) < detectionRange)
+            if (player != null && Vector2.Distance(transform.position, player.position) < attackRange)
             {
-                player.GetComponent<Health_script>().TakeDamage(damageAmount);
+                Debug.Log("Apply damage and knockback on player!");
+                player.GetComponent<Player_health>().TakeDamage(damageAmount);
+                player.GetComponent<Player_health>().ApplyKnockBack(transform.position);
             }
 
             yield return new WaitForSeconds(attackDuration - strikeTime);

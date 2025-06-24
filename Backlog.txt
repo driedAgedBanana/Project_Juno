@@ -24,3 +24,7 @@ Create enemy attack animation, inspired by Blasphemous (not really happy about i
 
 23 - 06 - 2025
 Adding player get hit animation. Also fixing animation not matching with enemies attack animation.
+
+24 - 06 - 2025
+Seperating player health and enemy health into different scripts.
+Adding apply knockback on player when dealing damages.

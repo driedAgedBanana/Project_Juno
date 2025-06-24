@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9011567177855670127}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: GroundCheck
   m_TagString: Untagged
   m_Icon: {fileID: -5487077368411116049, guid: 0000000000000000d000000000000000, type: 0}
@@ -48,7 +48,7 @@ GameObject:
   - component: {fileID: 7399389846545655919}
   - component: {fileID: 8226199199392530924}
   - component: {fileID: 7320488322260354891}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -89,7 +89,7 @@ MonoBehaviour:
   attackRate: 2
   waitTime: 0.5
   attackIndex: 0
-  damageAmount: 30
+  damageAmount: 20
   attackPoint: {fileID: 8334297155808287459}
   attackRange: 1
   enemyLayers:
@@ -108,8 +108,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 100
-  animator: {fileID: 7399389846545655919}
-  lifeTime: 1.2
+  _currentHealth: 0
+  animator: {fileID: 0}
+  lifeTime: 0
   playerAnimator: {fileID: 7399389846545655919}
   rb2D: {fileID: 4183982637390394067}
   moveSpeed: 8
@@ -535,7 +536,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8334297155808287459}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: AttackPoint
   m_TagString: Untagged
   m_Icon: {fileID: 8418204508859773708, guid: 0000000000000000d000000000000000, type: 0}

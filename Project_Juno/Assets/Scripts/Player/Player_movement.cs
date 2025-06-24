@@ -3,9 +3,11 @@ using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using System.Collections;
 
-public class Player_movement : Health_script
+public class Player_movement : Player_health
 {
     public static Player_movement Instance;
+
+    [Header("References")]
 
     [Header("Animations")]
     public Animator playerAnimator;
@@ -53,22 +55,25 @@ public class Player_movement : Health_script
     {
         if (!isDashing)
         {
-            dashingTrail.emitting = false;
-
-            rb2D.linearVelocity = new Vector2(horizontalMovement * currentmoveSpeed, rb2D.linearVelocity.y);
-
-            if (!isPlayerFacingRight && horizontalMovement > 0)
+            if (!isKnockedBack)
             {
-                FlipCharacter();
-            }
-            else if (isPlayerFacingRight && horizontalMovement < 0)
-            {
-                FlipCharacter();
-            }
+                dashingTrail.emitting = false;
 
-            playerAnimator.SetFloat("xVelocity", Mathf.Abs(rb2D.linearVelocity.x));
-            playerAnimator.SetFloat("yVelocity", rb2D.linearVelocity.y);
-            playerAnimator.SetBool("isJumping", !IsGrounded());
+                rb2D.linearVelocity = new Vector2(horizontalMovement * currentmoveSpeed, rb2D.linearVelocity.y);
+
+                if (!isPlayerFacingRight && horizontalMovement > 0)
+                {
+                    FlipCharacter();
+                }
+                else if (isPlayerFacingRight && horizontalMovement < 0)
+                {
+                    FlipCharacter();
+                }
+
+                playerAnimator.SetFloat("xVelocity", Mathf.Abs(rb2D.linearVelocity.x));
+                playerAnimator.SetFloat("yVelocity", rb2D.linearVelocity.y);
+                playerAnimator.SetBool("isJumping", !IsGrounded());
+            }
         }
         else
         {

@@ -479,6 +479,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5768804180157923966, guid: bc46a5ca315132e4f8a862f017922e2d, type: 3}
   m_PrefabInstance: {fileID: 2748753934822323708}
   m_PrefabAsset: {fileID: 0}
+--- !u!95 &2003378088 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 7399389846545655919, guid: bc46a5ca315132e4f8a862f017922e2d, type: 3}
+  m_PrefabInstance: {fileID: 2748753934822323708}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1130404093399603382
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -494,6 +499,10 @@ PrefabInstance:
     - target: {fileID: 190099909565552450, guid: aa02e169f7810c04c9496e31a367d86f, type: 3}
       propertyPath: strikeTime
       value: 0.45
+      objectReference: {fileID: 0}
+    - target: {fileID: 190099909565552450, guid: aa02e169f7810c04c9496e31a367d86f, type: 3}
+      propertyPath: attackRange
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 190099909565552450, guid: aa02e169f7810c04c9496e31a367d86f, type: 3}
       propertyPath: attackDuration
@@ -564,10 +573,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 2771632298000714279, guid: bc46a5ca315132e4f8a862f017922e2d, type: 3}
-      propertyPath: damageAmount
-      value: 20
-      objectReference: {fileID: 0}
     - target: {fileID: 5768804180157923966, guid: bc46a5ca315132e4f8a862f017922e2d, type: 3}
       propertyPath: m_LocalPosition.x
       value: -20.42
@@ -608,21 +613,25 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6296195797663612013, guid: bc46a5ca315132e4f8a862f017922e2d, type: 3}
-      propertyPath: m_Layer
-      value: 7
-      objectReference: {fileID: 0}
     - target: {fileID: 6717195871691742777, guid: bc46a5ca315132e4f8a862f017922e2d, type: 3}
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
-    - target: {fileID: 6717195871691742777, guid: bc46a5ca315132e4f8a862f017922e2d, type: 3}
-      propertyPath: m_Layer
-      value: 7
+    - target: {fileID: 9118998034679521371, guid: bc46a5ca315132e4f8a862f017922e2d, type: 3}
+      propertyPath: animator
+      value: 
+      objectReference: {fileID: 2003378088}
+    - target: {fileID: 9118998034679521371, guid: bc46a5ca315132e4f8a862f017922e2d, type: 3}
+      propertyPath: lifeTime
+      value: 2
       objectReference: {fileID: 0}
-    - target: {fileID: 8115845599793524506, guid: bc46a5ca315132e4f8a862f017922e2d, type: 3}
-      propertyPath: m_Layer
-      value: 7
+    - target: {fileID: 9118998034679521371, guid: bc46a5ca315132e4f8a862f017922e2d, type: 3}
+      propertyPath: knockBackForce
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 9118998034679521371, guid: bc46a5ca315132e4f8a862f017922e2d, type: 3}
+      propertyPath: knockBackDuration
+      value: 0.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

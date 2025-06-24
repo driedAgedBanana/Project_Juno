@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class Health_script : MonoBehaviour
+public class Enemy_health : MonoBehaviour
 {
     [Header("Health section")]
     [SerializeField] protected int maxHealth = 100;
