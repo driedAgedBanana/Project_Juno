@@ -10,7 +10,6 @@ public class Enemy_script : Enemy_health
     public float patrolSpeed = 2f;
     public float chaseSpeed = 3.5f;
     private float currentSpeed;
-    private bool _shouldStop = false;
     private bool _movingRight = true;
 
     [Header("Detection")]
@@ -28,6 +27,9 @@ public class Enemy_script : Enemy_health
 
 
     [Header("Attack and damages")]
+    private bool _pauseAfterAttack = false;
+    public float pauseDurationAfterAttack = 0.75f;
+
     private bool _isAttacking;
     public float idleBeforeAttack = 1f;
     public float attackDuration = 0.5f;
@@ -62,7 +64,7 @@ public class Enemy_script : Enemy_health
 
     private void Update()
     {
-        if (_shouldStop || _isAttacking) return;
+        if ( _isAttacking) return;
 
         float distanceToPlayer = Vector2.Distance(transform.position, player.position);
 
@@ -103,6 +105,8 @@ public class Enemy_script : Enemy_health
 
     private void ChasingPlayer()
     {
+        if (_isAttacking) return;
+
         currentSpeed = chaseSpeed;
         enemyAnimator.SetBool("isChasingPlayer", true);
 
@@ -134,7 +138,6 @@ public class Enemy_script : Enemy_health
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            _shouldStop = true;
             currentSpeed = 0;
             _isPlayerInRange = true;
 
@@ -144,58 +147,55 @@ public class Enemy_script : Enemy_health
 
     private IEnumerator Attacking()
     {
-        _canAttack = true;
         _isAttacking = true;
-
         rb2D.linearVelocity = Vector2.zero;
-        while (_isPlayerInRange)
+        enemyAnimator.Play("Idle");
+
+        yield return new WaitForSeconds(idleBeforeAttack);
+
+        if (!_isPlayerInRange)
         {
-            animator.Play("Idle");
-            yield return new WaitForSeconds(idleBeforeAttack);
-
-            if (!_isPlayerInRange) break;
-
-
-            animator.Play("Attack");
-
-            yield return new WaitForSeconds(strikeTime);
-
-            if (player != null && Vector2.Distance(transform.position, player.position) < attackRange)
-            {
-                Debug.Log("Apply damage and knockback on player!");
-                player.GetComponent<Player_health>().TakeDamage(damageAmount);
-                player.GetComponent<Player_health>().ApplyKnockBack(transform.position);
-            }
-
-            yield return new WaitForSeconds(attackDuration - strikeTime);
-            if (!_isPlayerInRange) break;
-
-            animator.Play("Idle");
-            yield return new WaitForSeconds(cooldownBetweenAttacks);
+            _isAttacking = false;
+            yield break;
         }
 
-        animator.Play("Idle");
-        _canAttack = false;
+        enemyAnimator.SetTrigger("isAttackingPlayer");
+        yield return new WaitForSeconds(strikeTime);
+
+        if (player != null && Vector2.Distance(transform.position, player.position) < attackRange)
+        {
+            Debug.Log("Apply damage and knockback on player!");
+            player.GetComponent<Player_health>().TakeDamage(damageAmount);
+            player.GetComponent<Player_health>().ApplyKnockBack(transform.position);
+
+            StartCoroutine(PauseAfterAttack());
+        }
+
+        yield return new WaitForSeconds(attackDuration - strikeTime);
+
+        enemyAnimator.Play("Idle");
         _isAttacking = false;
+
+        yield return new WaitForSeconds(cooldownBetweenAttacks);
     }
+
+    private IEnumerator PauseAfterAttack()
+    {
+        _pauseAfterAttack = true;
+        yield return new WaitForSeconds(pauseDurationAfterAttack);
+        _pauseAfterAttack = false;
+    }
+
 
     private void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))
         {
+            _isPlayerInRange = false;
             if (_attackCoroutine != null)
             {
                 StopCoroutine(_attackCoroutine);
                 _attackCoroutine = null;
-            }
-
-            if (!_isAttacking || player != null && Vector2.Distance(transform.position, player.position) < detectionRange)
-            {
-                ChasingPlayer();
-            }
-            else
-            {
-                Patrolling();
             }
         }
     }
