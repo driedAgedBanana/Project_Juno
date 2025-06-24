@@ -159,12 +159,12 @@ public class Enemy_script : Enemy_health
             yield break;
         }
 
-        enemyAnimator.SetTrigger("isAttackingPlayer");
+        enemyAnimator.Play("Attack");
         yield return new WaitForSeconds(strikeTime);
 
         if (player != null && Vector2.Distance(transform.position, player.position) < attackRange)
         {
-            Debug.Log("Apply damage and knockback on player!");
+            Debug.LogWarning("Apply damage and knockback on player!");
             player.GetComponent<Player_health>().TakeDamage(damageAmount);
             player.GetComponent<Player_health>().ApplyKnockBack(transform.position);
 
