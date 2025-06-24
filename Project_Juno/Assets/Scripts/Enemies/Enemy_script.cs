@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngineInternal;
 
 public class Enemy_script : Enemy_health
 {
@@ -23,15 +24,18 @@ public class Enemy_script : Enemy_health
     [Header("References")]
     public Transform groundDetection;
     public Transform player;
+    public Rigidbody2D rb2D;
 
 
     [Header("Attack and damages")]
+    private bool _isAttacking;
     public float idleBeforeAttack = 1f;
     public float attackDuration = 0.5f;
     public float strikeTime;
     public float cooldownBetweenAttacks = 1f;
     public int attackRange;
 
+    private Coroutine _attackCoroutine;
     [SerializeField] private bool _isPlayerInRange = false;
     [SerializeField] private bool _canAttack = false;
     public LayerMask playerLayer;
@@ -51,11 +55,14 @@ public class Enemy_script : Enemy_health
         }
 
         _canAttack = false;
+        _isAttacking = false;
+
+        rb2D = GetComponent<Rigidbody2D>();
     }
 
     private void Update()
     {
-        if (_shouldStop) return;
+        if (_shouldStop || _isAttacking) return;
 
         float distanceToPlayer = Vector2.Distance(transform.position, player.position);
 
@@ -71,6 +78,8 @@ public class Enemy_script : Enemy_health
 
     private void Patrolling()
     {
+        if (_isAttacking) return;
+
         currentSpeed = patrolSpeed;
         enemyAnimator.SetBool("isChasingPlayer", false);
 
@@ -98,10 +107,11 @@ public class Enemy_script : Enemy_health
         enemyAnimator.SetBool("isChasingPlayer", true);
 
         // Direction vector normalized toward player
-        Vector2 direction = (player.position - transform.position).normalized;
+        Vector2 direction = new Vector2(player.position.x - transform.position.x, 0f).normalized;
 
         // Move toward the player
-        transform.position = Vector2.MoveTowards(transform.position, player.position, currentSpeed * Time.deltaTime);
+        Vector2 targetPos = new Vector2(player.position.x, transform.position.y);
+        transform.position = Vector2.MoveTowards(transform.position, targetPos, currentSpeed * Time.deltaTime);
 
         // Flip sprite to face movement direction
         if ((direction.x > 0 && !_movingRight) || (direction.x < 0 && _movingRight))
@@ -124,19 +134,20 @@ public class Enemy_script : Enemy_health
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            // Stop movement
             _shouldStop = true;
             currentSpeed = 0;
             _isPlayerInRange = true;
 
-            StartCoroutine(Attacking());
+            _attackCoroutine = StartCoroutine(Attacking());
         }
     }
 
     private IEnumerator Attacking()
     {
         _canAttack = true;
+        _isAttacking = true;
 
+        rb2D.linearVelocity = Vector2.zero;
         while (_isPlayerInRange)
         {
             animator.Play("Idle");
@@ -157,8 +168,6 @@ public class Enemy_script : Enemy_health
             }
 
             yield return new WaitForSeconds(attackDuration - strikeTime);
-
-
             if (!_isPlayerInRange) break;
 
             animator.Play("Idle");
@@ -167,17 +176,27 @@ public class Enemy_script : Enemy_health
 
         animator.Play("Idle");
         _canAttack = false;
+        _isAttacking = false;
     }
 
-    //private void OnTriggerExit2D(Collider2D collision)
-    //{
-    //    if (collision.gameObject.CompareTag("Player"))
-    //    {
-    //        enemyAnimator.SetBool("isChasingPlayer", true);
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            if (_attackCoroutine != null)
+            {
+                StopCoroutine(_attackCoroutine);
+                _attackCoroutine = null;
+            }
 
-    //        _shouldStop = false;
-
-    //        currentSpeed = chaseSpeed;
-    //    }
-    //}
+            if (!_isAttacking || player != null && Vector2.Distance(transform.position, player.position) < detectionRange)
+            {
+                ChasingPlayer();
+            }
+            else
+            {
+                Patrolling();
+            }
+        }
+    }
 }

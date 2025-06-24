@@ -340,6 +340,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!50 &710278677 stripped
+Rigidbody2D:
+  m_CorrespondingSourceObject: {fileID: 8976662175669565236, guid: aa02e169f7810c04c9496e31a367d86f, type: 3}
+  m_PrefabInstance: {fileID: 1130404093399603382}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1277754237
 GameObject:
   m_ObjectHideFlags: 0
@@ -493,6 +498,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 190099909565552450, guid: aa02e169f7810c04c9496e31a367d86f, type: 3}
+      propertyPath: rb2D
+      value: 
+      objectReference: {fileID: 710278677}
+    - target: {fileID: 190099909565552450, guid: aa02e169f7810c04c9496e31a367d86f, type: 3}
       propertyPath: player
       value: 
       objectReference: {fileID: 2003378085}
@@ -505,12 +514,20 @@ PrefabInstance:
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 190099909565552450, guid: aa02e169f7810c04c9496e31a367d86f, type: 3}
+      propertyPath: damageAmount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 190099909565552450, guid: aa02e169f7810c04c9496e31a367d86f, type: 3}
       propertyPath: attackDuration
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 190099909565552450, guid: aa02e169f7810c04c9496e31a367d86f, type: 3}
       propertyPath: idleBeforeAttack
       value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 190099909565552450, guid: aa02e169f7810c04c9496e31a367d86f, type: 3}
+      propertyPath: pauseDurationAtk
+      value: 0.75
       objectReference: {fileID: 0}
     - target: {fileID: 190099909565552450, guid: aa02e169f7810c04c9496e31a367d86f, type: 3}
       propertyPath: cooldownBetweenAttacks
@@ -526,7 +543,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6382864748095320231, guid: aa02e169f7810c04c9496e31a367d86f, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.36
+      value: -1.58
       objectReference: {fileID: 0}
     - target: {fileID: 6382864748095320231, guid: aa02e169f7810c04c9496e31a367d86f, type: 3}
       propertyPath: m_LocalPosition.z
@@ -559,6 +576,18 @@ PrefabInstance:
     - target: {fileID: 6382864748095320231, guid: aa02e169f7810c04c9496e31a367d86f, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8976662175669565236, guid: aa02e169f7810c04c9496e31a367d86f, type: 3}
+      propertyPath: m_Constraints
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 9194206705578757957, guid: aa02e169f7810c04c9496e31a367d86f, type: 3}
+      propertyPath: m_Size.x
+      value: 1.035675
+      objectReference: {fileID: 0}
+    - target: {fileID: 9194206705578757957, guid: aa02e169f7810c04c9496e31a367d86f, type: 3}
+      propertyPath: m_Offset.x
+      value: 0.93442726
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
