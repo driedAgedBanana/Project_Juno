@@ -4,13 +4,22 @@ using UnityEngineInternal;
 
 public class Enemy_script : Enemy_health
 {
+    public enum EnemyBehaviour
+    {
+        Patrolling,
+        Chasing,
+        Attacking
+    }
+
     public Animator enemyAnimator;
+    private EnemyBehaviour _currentBehaviour = EnemyBehaviour.Patrolling;
 
     [Header("Movement speed")]
     public float patrolSpeed = 2f;
     public float chaseSpeed = 3.5f;
     private float currentSpeed;
     private bool _movingRight = true;
+    private float distanceToPlayer;
 
     [Header("Detection")]
     public float detectionRange = 5f;
@@ -29,17 +38,18 @@ public class Enemy_script : Enemy_health
     [Header("Attack and damages")]
     private bool _pauseAfterAttack = false;
     public float pauseDurationAfterAttack = 0.75f;
+    public float chasePlayerAfterAttack = 2f;
 
     private bool _isAttacking;
     public float idleBeforeAttack = 1f;
     public float attackDuration = 0.5f;
     public float strikeTime;
     public float cooldownBetweenAttacks = 1f;
-    public int attackRange;
+    public float attackRange;
 
     private Coroutine _attackCoroutine;
     [SerializeField] private bool _isPlayerInRange = false;
-    [SerializeField] private bool _canAttack = false;
+
     public LayerMask playerLayer;
     public int damageAmount = 30;
 
@@ -56,7 +66,6 @@ public class Enemy_script : Enemy_health
             Debug.LogWarning("Player not found! Make sure your player has the 'Player' tag assigned.");
         }
 
-        _canAttack = false;
         _isAttacking = false;
 
         rb2D = GetComponent<Rigidbody2D>();
@@ -64,23 +73,42 @@ public class Enemy_script : Enemy_health
 
     private void Update()
     {
-        if ( _isAttacking) return;
+        if (_isAttacking) return;
 
-        float distanceToPlayer = Vector2.Distance(transform.position, player.position);
+        distanceToPlayer = Vector2.Distance(transform.position, player.position);
 
-        if (distanceToPlayer < detectionRange)
+        switch (_currentBehaviour)
         {
-            ChasingPlayer();
-        }
-        else
-        {
-            Patrolling();
+            case EnemyBehaviour.Patrolling:
+                Patrolling();
+                break;
+            case EnemyBehaviour.Chasing:
+                ChasingPlayer();
+                break;
+            case EnemyBehaviour.Attacking:
+                if (!_isPlayerInRange)
+                {
+                    _currentBehaviour = distanceToPlayer < detectionRange ? EnemyBehaviour.Chasing : EnemyBehaviour.Patrolling;
+                    break;
+                }
+
+                if (_attackCoroutine == null)
+                {
+                    _attackCoroutine = StartCoroutine(Attacking());
+                }
+                break;
+
         }
     }
 
     private void Patrolling()
     {
         if (_isAttacking) return;
+
+        if (distanceToPlayer < detectionRange)
+        {
+            _currentBehaviour = EnemyBehaviour.Chasing;
+        }
 
         currentSpeed = patrolSpeed;
         enemyAnimator.SetBool("isChasingPlayer", false);
@@ -106,6 +134,11 @@ public class Enemy_script : Enemy_health
     private void ChasingPlayer()
     {
         if (_isAttacking) return;
+
+        if (distanceToPlayer > detectionRange)
+        {
+            _currentBehaviour = EnemyBehaviour.Patrolling;
+        }
 
         currentSpeed = chaseSpeed;
         enemyAnimator.SetBool("isChasingPlayer", true);
@@ -141,12 +174,19 @@ public class Enemy_script : Enemy_health
             currentSpeed = 0;
             _isPlayerInRange = true;
 
-            _attackCoroutine = StartCoroutine(Attacking());
+            _currentBehaviour = EnemyBehaviour.Attacking;
         }
     }
 
     private IEnumerator Attacking()
     {
+        if (!_isPlayerInRange)
+        {
+            _isAttacking = false;
+            _attackCoroutine = null;
+            yield break;
+        }
+
         _isAttacking = true;
         rb2D.linearVelocity = Vector2.zero;
         enemyAnimator.Play("Idle");
@@ -156,6 +196,7 @@ public class Enemy_script : Enemy_health
         if (!_isPlayerInRange)
         {
             _isAttacking = false;
+            _attackCoroutine = null;
             yield break;
         }
 
@@ -171,12 +212,23 @@ public class Enemy_script : Enemy_health
             StartCoroutine(PauseAfterAttack());
         }
 
+        if (!_isPlayerInRange)
+        {
+            _isAttacking = false;
+            _attackCoroutine = null;
+            yield break;
+        }
+        
         yield return new WaitForSeconds(attackDuration - strikeTime);
+
 
         enemyAnimator.Play("Idle");
         _isAttacking = false;
 
         yield return new WaitForSeconds(cooldownBetweenAttacks);
+
+        _currentBehaviour = distanceToPlayer < detectionRange ? EnemyBehaviour.Chasing : EnemyBehaviour.Patrolling;
+        _attackCoroutine = null;
     }
 
     private IEnumerator PauseAfterAttack()
@@ -192,11 +244,33 @@ public class Enemy_script : Enemy_health
         if (collision.gameObject.CompareTag("Player"))
         {
             _isPlayerInRange = false;
-            if (_attackCoroutine != null)
-            {
-                StopCoroutine(_attackCoroutine);
-                _attackCoroutine = null;
-            }
+            StartCoroutine(DelayedCancelAttack());
+        }
+    }
+
+    private IEnumerator DelayedCancelAttack()
+    {
+        yield return new WaitForSeconds(chasePlayerAfterAttack);
+        CancellingAttack();
+    }
+
+    private void CancellingAttack()
+    {
+        _isAttacking = false;
+
+        if (_attackCoroutine != null)
+        {
+            StopCoroutine(_attackCoroutine);
+            _attackCoroutine = null;
+        }
+
+        if (distanceToPlayer < detectionRange)
+        {
+            _currentBehaviour = EnemyBehaviour.Chasing;
+        }
+        else
+        {
+            _currentBehaviour = EnemyBehaviour.Patrolling;
         }
     }
 }

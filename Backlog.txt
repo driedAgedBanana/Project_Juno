@@ -28,3 +28,6 @@ Adding player get hit animation. Also fixing animation not matching with enemies
 24 - 06 - 2025
 Seperating player health and enemy health into different scripts.
 Adding apply knockback on player when dealing damages.
+
+26 - 06 - 2025
+Implementing enumeration on enemy behaviour.

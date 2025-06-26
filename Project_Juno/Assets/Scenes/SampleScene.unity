@@ -530,6 +530,10 @@ PrefabInstance:
       value: 0.75
       objectReference: {fileID: 0}
     - target: {fileID: 190099909565552450, guid: aa02e169f7810c04c9496e31a367d86f, type: 3}
+      propertyPath: chasePlayerAfterAttack
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 190099909565552450, guid: aa02e169f7810c04c9496e31a367d86f, type: 3}
       propertyPath: cooldownBetweenAttacks
       value: 0.5
       objectReference: {fileID: 0}
