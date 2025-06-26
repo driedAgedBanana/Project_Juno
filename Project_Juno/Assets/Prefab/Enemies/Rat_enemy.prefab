@@ -71,7 +71,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6382864748095320231}
-  - component: {fileID: 190099909565552450}
   - component: {fileID: 8378475858588652993}
   - component: {fileID: 4220358691465598098}
   - component: {fileID: 6021796651385724232}
@@ -101,47 +100,6 @@ Transform:
   - {fileID: 4889209037014061539}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &190099909565552450
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6028661974268613510}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f3b0fa098f0d604e94dab92157d743c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxHealth: 100
-  _currentHealth: 100
-  animator: {fileID: 4220358691465598098}
-  lifeTime: 1
-  enemyAnimator: {fileID: 4220358691465598098}
-  patrolSpeed: 4
-  chaseSpeed: 6
-  detectionRange: 5
-  patrolCheckDistance: 8.27
-  groundDetectionDistance: 2
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 64
-  patrolCheckFront: {fileID: 4889209037014061539}
-  enemyLayer:
-    serializedVersion: 2
-    m_Bits: 256
-  groundDetection: {fileID: 2189310796452177864}
-  player: {fileID: 0}
-  idleBeforeAttack: 0.6
-  attackDuration: 0.6
-  cooldownBetweenAttacks: 0.8
-  attackCooldown: 1
-  _isPlayerInRange: 0
-  _canAttack: 0
-  playerLayer:
-    serializedVersion: 2
-    m_Bits: 128
-  damageAmount: 1
 --- !u!212 &8378475858588652993
 SpriteRenderer:
   m_ObjectHideFlags: 0

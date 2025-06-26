@@ -119,6 +119,11 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!4 &119507217 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2189310796452177864, guid: aa02e169f7810c04c9496e31a367d86f, type: 3}
+  m_PrefabInstance: {fileID: 1130404093399603382}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -479,6 +484,47 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!1 &1475419410 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6028661974268613510, guid: aa02e169f7810c04c9496e31a367d86f, type: 3}
+  m_PrefabInstance: {fileID: 1130404093399603382}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &1475419413 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 4220358691465598098, guid: aa02e169f7810c04c9496e31a367d86f, type: 3}
+  m_PrefabInstance: {fileID: 1130404093399603382}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1475419417
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1475419410}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 27190ba43d2de13459770571b8b1dfd3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 0
+  detectionRange: 5
+  player: {fileID: 2003378085}
+  enemyAnimator: {fileID: 1475419413}
+  dieLifeTime: 0
+  patrolSpeed: 4
+  chasingSpeed: 6
+  attackingRange: 3
+  attackingCoolDown: 2
+  groundCheck: {fileID: 119507217}
+  patrolCheckFront: {fileID: 0}
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  groundDetectionDistance: 0
+  patrolCheckDistance: 0
 --- !u!4 &2003378085 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5768804180157923966, guid: bc46a5ca315132e4f8a862f017922e2d, type: 3}
@@ -596,7 +642,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 6028661974268613510, guid: aa02e169f7810c04c9496e31a367d86f, type: 3}
+      insertIndex: 1
+      addedObject: {fileID: 1475419417}
   m_SourcePrefab: {fileID: 100100000, guid: aa02e169f7810c04c9496e31a367d86f, type: 3}
 --- !u!1001 &2748753934822323708
 PrefabInstance:
