@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using UnityEngine;
 
 public class MeleeEnemy : EnemyBase
@@ -21,9 +22,47 @@ public class MeleeEnemy : EnemyBase
     public float groundDetectionDistance;
     public float patrolCheckDistance;
 
+    [Header("Attacking properties")]
+    public int damageAmount;
+
     protected override void HandleState()
     {
-        
+        switch (currentEnemyBehaviour)
+        {
+            case EnemyBehaviour.Idling:
+                if (Vector2.Distance(transform.position, player.position) > detectionRange)
+                {
+                    currentEnemyBehaviour = EnemyBehaviour.Patrolling;
+                }
+                else
+                {
+                    currentEnemyBehaviour = EnemyBehaviour.Chasing;
+                }
+                break;
+
+            case EnemyBehaviour.Patrolling:
+                Patrolling();
+                if (Vector2.Distance(transform.position, player.position) < detectionRange)
+                {
+                    currentEnemyBehaviour = EnemyBehaviour.Chasing;
+                }
+                break;
+
+            case EnemyBehaviour.Chasing:
+                ChasingPlayer();
+                break;
+
+            case EnemyBehaviour.Attacking:
+                // coming son
+                break;
+
+            case EnemyBehaviour.Hurt:
+                // Coming soon
+                break;
+
+            case EnemyBehaviour.Die:
+                break;
+        }
     }
 
     private void Patrolling()
@@ -39,9 +78,46 @@ public class MeleeEnemy : EnemyBase
         RaycastHit2D patrolCheckHit = Physics2D.Raycast(patrolCheckFront.position, frontDirection, patrolCheckDistance, enemyLayer);
         Debug.DrawRay(patrolCheckFront.position, patrolCheckDistance * frontDirection, Color.green);
 
-        if (!groundInfo.collider)
+        if (!groundInfo.collider || (patrolCheckHit.collider != null))
         {
-            // Flip
+            Flip();
         }
+    }
+
+    private void ChasingPlayer()
+    {
+        float distance = Vector2.Distance(transform.position, player.position);
+
+        if (distance <= attackingRange && Time.time > _lastAttackTime + attackingCoolDown)
+        {
+            currentEnemyBehaviour = EnemyBehaviour.Attacking;
+            enemyAnimator.SetTrigger("isAttacking");
+            _lastAttackTime = Time.time;
+        }
+        else
+        {
+            Vector2 direction = (player.position - transform.position).normalized;
+            transform.Translate(direction * chasingSpeed * Time.deltaTime);
+        }
+    }
+
+    public void DealingDamage() // Call it via an animation event key
+    {
+        if (Vector2.Distance(transform.position, player.position) <= attackingRange)
+        {
+            player.GetComponent<Player_health>().TakeDamage(damageAmount);
+        }
+
+        currentEnemyBehaviour = EnemyBehaviour.Idling;
+    }
+
+    void Flip()
+    {
+        _isMovingRight = !_isMovingRight;
+
+        // Flip visual sprite by inverting scale.x
+        Vector3 localScale = transform.localScale;
+        localScale.x *= -1;
+        transform.localScale = localScale;
     }
 }

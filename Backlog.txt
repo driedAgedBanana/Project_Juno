@@ -32,3 +32,6 @@ Adding apply knockback on player when dealing damages.
 26 - 06 - 2025
 Implementing enumeration on enemy behaviour.
 Currently reworking the script.
+
+27 - 07 - 2025
+Continue working on the enemy script.

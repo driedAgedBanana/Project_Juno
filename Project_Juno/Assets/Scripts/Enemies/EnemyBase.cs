@@ -4,6 +4,7 @@ public abstract class EnemyBase : MonoBehaviour
 {
     public enum EnemyBehaviour
     {
+        Idling,
         Patrolling,
         Chasing,
         Attacking,
