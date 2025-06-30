@@ -35,3 +35,6 @@ Currently reworking the script.
 
 27 - 07 - 2025
 Continue working on the enemy script.
+
+30 - 06 - 2025
+Still working on the enemy script.

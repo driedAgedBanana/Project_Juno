@@ -22,6 +22,7 @@ public abstract class EnemyBase : MonoBehaviour
     public Transform player;
     public Animator enemyAnimator;
     public float dieLifeTime;
+    public Rigidbody2D rb2D;
 
     protected virtual void Awake()
     {
@@ -44,7 +45,7 @@ public abstract class EnemyBase : MonoBehaviour
         }
 
         currentHealth -= damageAmount;
-        enemyAnimator.SetTrigger("isHurt");
+        //enemyAnimator.SetTrigger("isHurt");
         currentEnemyBehaviour = EnemyBehaviour.Hurt;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
     }

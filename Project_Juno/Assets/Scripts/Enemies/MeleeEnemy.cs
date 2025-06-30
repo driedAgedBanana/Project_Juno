@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Runtime.InteropServices;
 using UnityEngine;
 
@@ -11,7 +12,7 @@ public class MeleeEnemy : EnemyBase
 
     private float _currentSpeed;
 
-    private float _lastAttackTime;
+    [SerializeField] private float _lastAttackTime;
     private bool _isMovingRight = true;
 
     public Transform groundCheck;
@@ -23,6 +24,10 @@ public class MeleeEnemy : EnemyBase
     public float patrolCheckDistance;
 
     [Header("Attacking properties")]
+    private bool _isAttacking = false;
+    private Coroutine _attackCoroutine;
+    public float idleBeforeAttack = 1f;
+    public float pauseMoment;
     public int damageAmount;
 
     protected override void HandleState()
@@ -53,7 +58,7 @@ public class MeleeEnemy : EnemyBase
                 break;
 
             case EnemyBehaviour.Attacking:
-                // coming son
+                AttackingPlayer();
                 break;
 
             case EnemyBehaviour.Hurt:
@@ -68,7 +73,8 @@ public class MeleeEnemy : EnemyBase
     private void Patrolling()
     {
         float move = _isMovingRight ? 1 : -1;
-        transform.Translate(Vector2.right * move * patrolSpeed * Time.deltaTime);
+        _currentSpeed = patrolSpeed;
+        transform.Translate(Vector2.right * move * _currentSpeed * Time.deltaTime);
 
         // Flip when hitting egde
         RaycastHit2D groundInfo = Physics2D.Raycast(groundCheck.position, Vector2.down, groundDetectionDistance, groundLayer);
@@ -87,21 +93,82 @@ public class MeleeEnemy : EnemyBase
     private void ChasingPlayer()
     {
         float distance = Vector2.Distance(transform.position, player.position);
+        _currentSpeed = chasingSpeed;
 
-        if (distance <= attackingRange && Time.time > _lastAttackTime + attackingCoolDown)
+        if (distance <= attackingRange)
         {
+            enemyAnimator.SetBool("isChasingPlayer", false);
             currentEnemyBehaviour = EnemyBehaviour.Attacking;
-            enemyAnimator.SetTrigger("isAttacking");
-            _lastAttackTime = Time.time;
+            return;
         }
-        else
+
+        Vector2 direction = (player.position - transform.position).normalized;
+        transform.Translate(direction * _currentSpeed * Time.deltaTime);
+
+        enemyAnimator.SetBool("isChasingPlayer", true);
+
+        if ((direction.x > 0 && !_isMovingRight) || (direction.x < 0 && _isMovingRight))
         {
-            Vector2 direction = (player.position - transform.position).normalized;
-            transform.Translate(direction * chasingSpeed * Time.deltaTime);
+            Flip();
         }
     }
 
-    public void DealingDamage() // Call it via an animation event key
+
+    private void AttackingPlayer()
+    {
+        float distance = Vector2.Distance(transform.position, player.position);
+
+        if (distance > attackingRange)
+        {
+            if (_attackCoroutine != null)
+            {
+                StopCoroutine(_attackCoroutine);
+                _attackCoroutine = null;
+            }
+            _isAttacking = false;
+            currentEnemyBehaviour = EnemyBehaviour.Chasing;
+            return;
+        }
+
+        Vector2 direction = (player.position - transform.position).normalized;
+        if ((direction.x > 0 && !_isMovingRight) || (direction.x < 0 && _isMovingRight))
+            Flip();
+
+        if (!_isAttacking)
+        {
+            _attackCoroutine = StartCoroutine(Attacking());
+        }
+    }
+
+    private IEnumerator Attacking()
+    {
+        _isAttacking = true;
+
+        // Play animation
+        //enemyAnimator.SetBool("isAttackingPlayer", true);
+        enemyAnimator.SetTrigger("attackingPlayer");
+
+        // Wait for animation + cooldown
+        yield return new WaitForSeconds(attackingCoolDown);
+
+        _isAttacking = false;
+
+        // Go back to chasing if player still in range
+        if (Vector2.Distance(transform.position, player.position) <= attackingRange)
+        {
+            currentEnemyBehaviour = EnemyBehaviour.Attacking;
+        }
+        else
+        {
+            currentEnemyBehaviour = EnemyBehaviour.Chasing;
+        }
+
+        _attackCoroutine = null;
+    }
+
+
+
+    public void DealingDamage(int damageAmount) // Call it via an animation event key
     {
         if (Vector2.Distance(transform.position, player.position) <= attackingRange)
         {

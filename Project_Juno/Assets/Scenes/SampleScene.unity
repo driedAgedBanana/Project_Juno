@@ -645,10 +645,12 @@ MonoBehaviour:
   player: {fileID: 2003378085}
   enemyAnimator: {fileID: 1475419413}
   dieLifeTime: 2
+  rb2D: {fileID: 710278677}
   patrolSpeed: 4
   chasingSpeed: 6
   attackingRange: 3
   attackingCoolDown: 2
+  _lastAttackTime: 0
   groundCheck: {fileID: 119507217}
   patrolCheckFront: {fileID: 119507217}
   groundLayer:
@@ -659,6 +661,8 @@ MonoBehaviour:
     m_Bits: 256
   groundDetectionDistance: 2
   patrolCheckDistance: 0
+  idleBeforeAttack: 1
+  pauseMoment: 0
   damageAmount: 0
 --- !u!4 &2003378085 stripped
 Transform:
