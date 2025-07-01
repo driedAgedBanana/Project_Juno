@@ -41,3 +41,4 @@ Still working on the enemy script.
 
 01 - 07 - 2025
 Enemy bug is fixed, require further supervision.
+Adding hurt and death animation.

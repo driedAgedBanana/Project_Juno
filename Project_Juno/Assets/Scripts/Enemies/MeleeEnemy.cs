@@ -7,11 +7,8 @@ public class MeleeEnemy : EnemyBase
     [Header("Movement")]
     public float patrolSpeed = 4f;
     public float chasingSpeed = 6f;
-    public float attackingRange = 3f;
     public float attackingCoolDown = 2f;
-
-    private float _currentSpeed;
-
+    [HideInInspector] public float currentSpeed;
     private bool _isMovingRight = true;
 
     public Transform groundCheck;
@@ -23,12 +20,13 @@ public class MeleeEnemy : EnemyBase
     public float patrolCheckDistance;
 
     [Header("Attacking properties")]
-    private bool _isAttacking = false;
-    private Coroutine _attackCoroutine;
+    [HideInInspector] public bool _isAttacking = false;
     public int damageAmount;
 
     public float attackBufferZone = 0.5f; // prevent animation flickering
     public float minAttackCommitTime = 0.4f;
+
+    [HideInInspector] public Coroutine attackingCoroutine;
 
     protected override void HandleState()
     {
@@ -64,10 +62,6 @@ public class MeleeEnemy : EnemyBase
                 AttackingPlayer();
                 break;
 
-            case EnemyBehaviour.Hurt:
-                // Coming soon
-                break;
-
             case EnemyBehaviour.Die:
                 break;
         }
@@ -76,8 +70,8 @@ public class MeleeEnemy : EnemyBase
     private void Patrolling()
     {
         float move = _isMovingRight ? 1 : -1;
-        _currentSpeed = patrolSpeed;
-        transform.Translate(Vector2.right * move * _currentSpeed * Time.deltaTime);
+        currentSpeed = patrolSpeed;
+        transform.Translate(Vector2.right * move * currentSpeed * Time.deltaTime);
 
         // Flip when hitting egde
         RaycastHit2D groundInfo = Physics2D.Raycast(groundCheck.position, Vector2.down, groundDetectionDistance, groundLayer);
@@ -96,7 +90,7 @@ public class MeleeEnemy : EnemyBase
     private void ChasingPlayer()
     {
         float distance = Vector2.Distance(transform.position, player.position);
-        _currentSpeed = chasingSpeed;
+        currentSpeed = chasingSpeed;
 
         // Use buffer zone to prevent rapid toggling at edge of range
         if (distance <= attackingRange - attackBufferZone)
@@ -107,11 +101,11 @@ public class MeleeEnemy : EnemyBase
         }
 
         Vector2 direction = (player.position - transform.position).normalized;
-        transform.Translate(direction * _currentSpeed * Time.deltaTime);
+        transform.Translate(direction * currentSpeed * Time.deltaTime);
 
         enemyAnimator.SetBool("isChasingPlayer", true);
 
-        if(Vector2.Distance(transform.position, player.position) >= detectionRange)
+        if (Vector2.Distance(transform.position, player.position) >= detectionRange)
         {
             enemyAnimator.SetBool("isChasingPlayer", false);
             currentEnemyBehaviour = EnemyBehaviour.Patrolling;
@@ -125,16 +119,16 @@ public class MeleeEnemy : EnemyBase
     }
 
 
-    private void AttackingPlayer()
+    protected void AttackingPlayer()
     {
         float distance = Vector2.Distance(transform.position, player.position);
 
         if (distance > detectionRange)
         {
-            if (_attackCoroutine != null)
+            if (attackingCoroutine != null)
             {
-                StopCoroutine(_attackCoroutine);
-                _attackCoroutine = null;
+                StopCoroutine(attackingCoroutine);
+                attackingCoroutine = null;
             }
             _isAttacking = false;
             enemyAnimator.SetBool("isAttackingPlayer", false);
@@ -145,14 +139,29 @@ public class MeleeEnemy : EnemyBase
         // Only exit attack when player is BEYOND buffer zone
         if (distance > attackingRange + attackBufferZone && !_isAttacking)
         {
-            if (_attackCoroutine != null)
+            if (attackingCoroutine != null)
             {
-                StopCoroutine(_attackCoroutine);
-                _attackCoroutine = null;
+                StopCoroutine(attackingCoroutine);
+                attackingCoroutine = null;
             }
             enemyAnimator.SetBool("isAttackingPlayer", false);
             currentEnemyBehaviour = EnemyBehaviour.Chasing;
             return;
+        }
+
+        if (isHurt)
+        {
+            if (attackingCoroutine != null)
+            {
+                StopCoroutine(attackingCoroutine);
+                attackingCoroutine = null;
+                hurtResponse = StartCoroutine(Hurt());
+            }
+        }
+        else
+        {
+            StopCoroutine(Hurt());
+            attackingCoroutine = StartCoroutine(Attacking());
         }
 
         Vector2 direction = (player.position - transform.position).normalized;
@@ -161,11 +170,11 @@ public class MeleeEnemy : EnemyBase
 
         if (!_isAttacking)
         {
-            _attackCoroutine = StartCoroutine(Attacking());
+            attackingCoroutine = StartCoroutine(Attacking());
         }
     }
 
-    private IEnumerator Attacking()
+    public IEnumerator Attacking()
     {
         _isAttacking = true;
         enemyAnimator.SetBool("isAttackingPlayer", true);
@@ -177,6 +186,10 @@ public class MeleeEnemy : EnemyBase
             attackTimer += Time.deltaTime;
             yield return null;
         }
+
+        float damageDelay = 0.3f;
+        yield return new WaitForSeconds(damageDelay);
+        DealingDamage(damageAmount);
 
         // Complete the remaining cooldown
         float remainingCooldown = attackingCoolDown - minAttackCommitTime;
@@ -199,7 +212,7 @@ public class MeleeEnemy : EnemyBase
             currentEnemyBehaviour = EnemyBehaviour.Chasing;
         }
 
-        _attackCoroutine = null;
+        attackingCoroutine = null;
     }
 
     public void DealingDamage(int damageAmount) // Call it via an animation event key
@@ -207,6 +220,7 @@ public class MeleeEnemy : EnemyBase
         if (Vector2.Distance(transform.position, player.position) <= attackingRange)
         {
             player.GetComponent<Player_health>().TakeDamage(damageAmount);
+            player.GetComponent<Player_health>().ApplyKnockBack(transform.position);
         }
     }
 

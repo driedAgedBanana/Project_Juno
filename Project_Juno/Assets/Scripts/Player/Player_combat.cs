@@ -62,7 +62,7 @@ public class Player_combat : MonoBehaviour
 
         foreach(Collider2D enemies in hitEnemies)
         {
-            enemies.GetComponent<Enemy_health>().TakeDamage(damageAmount);
+            enemies.GetComponent<EnemyBase>().TakeDamage(damageAmount);
         }
 
         yield return new WaitForSeconds(waitTime);

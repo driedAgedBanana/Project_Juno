@@ -646,10 +646,11 @@ MonoBehaviour:
   enemyAnimator: {fileID: 1475419413}
   dieLifeTime: 2
   rb2D: {fileID: 710278677}
-  patrolSpeed: 4
+  hurtTime: 5
+  patrolSpeed: 3
   chasingSpeed: 6
-  attackingRange: 3
-  attackingCoolDown: 1.1
+  attackingCoolDown: 1
+  currentSpeed: 0
   groundCheck: {fileID: 119507217}
   patrolCheckFront: {fileID: 119507217}
   groundLayer:
@@ -660,10 +661,9 @@ MonoBehaviour:
     m_Bits: 256
   groundDetectionDistance: 2
   patrolCheckDistance: 0
-  idleBeforeAttack: 1
-  pauseMoment: 0
+  _isAttacking: 0
   damageAmount: 0
-  attackBufferZone: 0.9
+  attackBufferZone: 0.4
   minAttackCommitTime: 0.5
 --- !u!4 &2003378085 stripped
 Transform:
@@ -849,7 +849,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9118998034679521371, guid: bc46a5ca315132e4f8a862f017922e2d, type: 3}
       propertyPath: knockBackForce
-      value: 5
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 9118998034679521371, guid: bc46a5ca315132e4f8a862f017922e2d, type: 3}
       propertyPath: dashingCooldown
