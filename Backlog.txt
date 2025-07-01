@@ -38,3 +38,6 @@ Continue working on the enemy script.
 
 30 - 06 - 2025
 Still working on the enemy script.
+
+01 - 07 - 2025
+Enemy bug is fixed, require further supervision.
