@@ -118,9 +118,9 @@ public abstract class EnemyBase : MonoBehaviour
         if (this is MeleeEnemy melee)
         {
             melee.currentSpeed = 0;
+            currentEnemyBehaviour = EnemyBehaviour.Die;
+            enemyAnimator.SetTrigger("isDead");
+            Destroy(gameObject, dieLifeTime);
         }
-        currentEnemyBehaviour = EnemyBehaviour.Die;
-        enemyAnimator.SetTrigger("isDead");
-        Destroy(gameObject, dieLifeTime);
     }
 }
